@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Button, FlatList, Text, View, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styles from './styles/styles';
+import styles from '../styles/styles';
 
 const TodoList = () => {
   const [note, setNote] = useState('');
