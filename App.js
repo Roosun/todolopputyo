@@ -4,9 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './assets/config/firebaseConfig';
 import { View, Text } from 'react-native';
-import TodoList from './assets/components/TodoList';
 import LoginScreen from './assets/components/LoginScreen';
 import styles from './assets/styles/styles';
+import TodoListContainer from './assets/components/TodoListContainer';
 
 const Stack = createStackNavigator();
 
@@ -33,11 +33,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={user ? 'TodoList' : 'Login'}>
-        {/* Login-näkymä, jos käyttäjä ei ole kirjautunut */}
+        
         <Stack.Screen name="Login" component={LoginScreen} />
         
-        {/* TodoList-näkymä, jos käyttäjä on kirjautunut */}
-        <Stack.Screen name="TodoList" component={TodoList} />
+        <Stack.Screen name="TodoList" component={TodoListContainer} />
       </Stack.Navigator>
     </NavigationContainer>
   );

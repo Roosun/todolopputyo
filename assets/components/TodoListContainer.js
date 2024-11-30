@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, Button, FlatList, Text, View, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList,TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../styles/styles';
 
-const TodoList = () => {
-  const [note, setNote] = useState('');
+const TodoListContainer = () => {
   const [notes, setNotes] = useState([]);
+  const [note, setNote] = useState('');
 
-  // Lataa muistiinpanot AsyncStoragesta, kun komponentti ladataan
+  // Lataa muistiinpanot AsyncStoragesta
   useEffect(() => {
     const loadNotes = async () => {
       try {
@@ -23,35 +23,56 @@ const TodoList = () => {
   }, []);
 
   // Tallenna muistiinpano AsyncStorageen
-  const saveNote = async () => {
+  const addNote = async () => {
     if (note.trim()) {
       const newNotes = [...notes, note];
       setNotes(newNotes);
       try {
         await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
-        setNote(''); // Tyhjennetään input-kenttä
+        setNote('');
       } catch (error) {
         console.error('Error saving note:', error);
       }
     }
   };
 
+  // Poista muistiinpano AsyncStoragesta
+  const deleteNote = async (index) => {
+    const newNotes = notes.filter((_, i) => i !== index);
+    setNotes(newNotes);
+    try {
+      await AsyncStorage.setItem('notes', JSON.stringify(newNotes));
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
+  };
+
   return (
-    <View style={styles.containerTodo}>
+    <View style={styles.container}>
+      <Text style={styles.header}>Muistiinpanot</Text>
+      
       <TextInput
         value={note}
         onChangeText={setNote}
         placeholder="Lisää muistiinpano"
         style={styles.input}
       />
-      <Button title="Tallenna" onPress={saveNote} />
+      <Button title="Tallenna" onPress={addNote} />
+
       <FlatList
         data={notes}
-        renderItem={({ item }) => <Text style={styles.note}>{item}</Text>}
+        renderItem={({ item, index }) => (
+          <View style={styles.noteContainer}>
+            <Text style={styles.note}>{item}</Text>
+            <TouchableOpacity onPress={() => deleteNote(index)} style={styles.deleteButton}>
+              <Text style={styles.deleteText}>X</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         keyExtractor={(item, index) => index.toString()}
       />
     </View>
   );
 };
 
-export default TodoList;
+export default TodoListContainer;
